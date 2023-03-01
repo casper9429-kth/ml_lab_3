@@ -203,18 +203,19 @@ def trainBoost(base_classifier, X, labels, T=10):
         # ==========================
         
         # calculate delta
-        delta = (vote == labels)     
-        delta_inv = (vote != labels)
+        delta = (vote == labels)# .astype(float)
+        delta_inv = (vote != labels) #.astype(float)
 
         # calculate epsilon
         epsi = np.sum(wCur[delta == 0])
-
+        
         # calculate alpha
         alpha = 0.5*(np.log(1-epsi) - np.log(epsi))         
         
         # calculate new weights
+        #alpha_factor = np.exp(alpha*(1-2*(vote==labels)))
         alpha_factor = (delta[:]*(np.exp(-alpha)) + delta_inv[:]*(np.exp(alpha))) 
-        wCur[:,0] = wCur[:,0]*alpha_factor[:]    
+        wCur[:] = wCur[:]*alpha_factor[:,None]    
         
         # normalize the weights
         wCur = wCur/np.sum(wCur)
@@ -243,11 +244,23 @@ def classifyBoost(X, classifiers, alphas, Nclasses):
         # TODO: implement classificiation when we have trained several classifiers!
         # here we can do it by filling in the votes vector with weighted votes
         # ==========================
-        
+
+        # work on each x in parallel, work on each class in parallel
+        point_class = np.zeros((Npts,Nclasses))
+        for alpha, classifier in zip(alphas, classifiers): # iter t
+            for k in range(Nclasses):
+                vote = classifier.classify(X) # one vote for each point
+                delta = (vote == k)           # if vote == k, delta = 1, else 0
+                point_class[:,k] += alpha*delta # alpha*delta for each point 
+            
+            
+
+                
+        # save index of class that has the highest value in point_class
+        point_class = np.argmax(point_class,axis=1)
         # ==========================
 
-        # one way to compute yPred after accumulating the votes
-        return np.argmax(votes,axis=1)
+        return point_class
 
 
 # The implemented functions can now be summarized another classifer, the `BoostClassifier` class. This class enables boosting different types of classifiers by initializing it with the `base_classifier` argument. No need to add anything here.
