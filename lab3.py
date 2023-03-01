@@ -213,8 +213,8 @@ def trainBoost(base_classifier, X, labels, T=10):
         alpha = 0.5*(np.log(1-epsi) - np.log(epsi))         
         
         # calculate new weights
-        delta_factor = (delta[:]*(np.exp(-alpha)) + delta_inv[:]*(np.exp(alpha))) 
-        wCur[:,0] = wCur[:,0]*delta_factor[:]    
+        alpha_factor = (delta[:]*(np.exp(-alpha)) + delta_inv[:]*(np.exp(alpha))) 
+        wCur[:,0] = wCur[:,0]*alpha_factor[:]    
         
         # normalize the weights
         wCur = wCur/np.sum(wCur)
