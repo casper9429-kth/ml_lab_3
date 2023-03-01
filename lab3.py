@@ -48,8 +48,13 @@ def computePrior(labels, W=None):
     
     # ==========================
     # Calc prior for each class
+    
+    # weights should scale the class priors
+    # If a point has a weight twic
+
+    # scale 
     for k in range(Nclasses):
-        prior[k] = np.sum(labels == k) / Npts
+        prior[k] = np.sum(W[labels==k])
     
     
     return prior
