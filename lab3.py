@@ -248,8 +248,8 @@ def classifyBoost(X, classifiers, alphas, Nclasses):
         # work on each x in parallel, work on each class in parallel
         point_class = np.zeros((Npts,Nclasses))
         for alpha, classifier in zip(alphas, classifiers): # iter t
+            vote = classifier.classify(X) # one vote for each point
             for k in range(Nclasses):
-                vote = classifier.classify(X) # one vote for each point
                 delta = (vote == k)           # if vote == k, delta = 1, else 0
                 point_class[:,k] += alpha*delta # alpha*delta for each point 
             
@@ -289,7 +289,7 @@ class BoostClassifier(object):
 # Call the `testClassifier` and `plotBoundary` functions for this part.
 
 
-testClassifier(BoostClassifier(BayesClassifier(), T=10), dataset='iris',split=0.7)
+#testClassifier(BoostClassifier(BayesClassifier(), T=10), dataset='iris',split=0.7)
 
 
 
@@ -297,7 +297,7 @@ testClassifier(BoostClassifier(BayesClassifier(), T=10), dataset='iris',split=0.
 
 
 
-#plotBoundary(BoostClassifier(BayesClassifier()), dataset='iris',split=0.7)
+plotBoundary(BoostClassifier(BayesClassifier()), dataset='iris',split=0.7)
 
 
 # Now repeat the steps with a decision tree classifier.
