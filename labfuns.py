@@ -6,8 +6,9 @@ import matplotlib.cm as cm
 from matplotlib.patches import Ellipse
 from matplotlib.colors import ColorConverter
 import random as rnd
-from sklearn.datasets.samples_generator import make_blobs
 from sklearn import decomposition, tree
+import sklearn.datasets._samples_generator as skds
+#from sklearn.datasets.samples_generator import make_blobs
 
 # import seaborn as sns
 # sns.set()
@@ -131,7 +132,8 @@ def fetchDataset(dataset='iris'):
 
 
 def genBlobs(n_samples=200,centers=5,n_features=2):
-    X, y = make_blobs(n_samples=n_samples, centers=centers, n_features=n_features,random_state=0)
+    #X, y = make_blobs(n_samples=n_samples, centers=centers, n_features=n_features,random_state=0)
+    X,y = skds.make_blobs(n_samples=n_samples, centers=centers, n_features=n_features,random_state=0)
     return X,y
 
 

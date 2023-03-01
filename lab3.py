@@ -21,6 +21,7 @@ from scipy import misc
 from imp import reload
 from labfuns import *
 import random
+import numpy.linalg as la
 
 
 # ## Bayes classifier functions to implement
@@ -46,7 +47,11 @@ def computePrior(labels, W=None):
     # ==========================
     
     # ==========================
-
+    # Calc prior for each class
+    for k in range(Nclasses):
+        prior[k] = np.sum(labels == k) / Npts
+    
+    
     return prior
 
 # NOTE: you do not need to handle the W argument for this part!
@@ -70,6 +75,20 @@ def mlParams(X, labels, W=None):
     # ==========================
     
     # ==========================
+    
+    # Calc mu sigma for each class
+    for k in range(Nclasses):
+        # calculate mu_k for all k, mu_k is the mean of all the points in class k 
+        mu[k] = np.mean(X[labels == k], axis=0)
+        # calculate sigma_k for all k, sigma_k is the covariance of all the points in class k, assume the covariance matrix is diagonal
+        diff = X[labels == k] - mu[k]
+        diff_sum = np.sum(np.square(diff), axis=0)
+        sigma[k] = np.diag(diff_sum / np.sum(labels == k))
+
+
+
+
+
 
     return mu, sigma
 
@@ -86,6 +105,15 @@ def classifyBayes(X, prior, mu, sigma):
 
     # TODO: fill in the code to compute the log posterior logProb!
     # ==========================
+    
+    # iter through each class
+    for k in range(Nclasses):
+        # index k in prior gives the prior of class k
+        # index k in mu gives the mean of class k
+        # index k in sigma gives the covariance of class k
+        # calculate the log posterior for each class, logProb(i,k) is the log posterior of class k for point i
+        logProb[:,k] = -0.5*np.log(la.det(sigma[k])) - 0.5(X - mu[k])  @ la.inv(sigma[k]) @ (X - mu[k]).T + np.log(prior[k])
+    
     
     # ==========================
     
@@ -127,7 +155,7 @@ plotGaussian(X,labels,mu,sigma)
 # Call the `testClassifier` and `plotBoundary` functions for this part.
 
 
-#testClassifier(BayesClassifier(), dataset='iris', split=0.7)
+testClassifier(BayesClassifier(), dataset='iris', split=0.7)
 
 
 
