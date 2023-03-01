@@ -79,11 +79,11 @@ def mlParams(X, labels, W=None):
     # Calc mu sigma for each class
     for k in range(Nclasses):
         # calculate mu_k for all k, mu_k is the mean of all the points in class k 
-        mu[k] = np.mean(X[labels == k], axis=0)
+        mu[k] = np.sum(X[labels == k]*W[labels==k], axis=0)/np.sum(W[labels==k])
         # calculate sigma_k for all k, sigma_k is the covariance of all the points in class k, assume the covariance matrix is diagonal
-        diff = X[labels == k] - mu[k]
-        diff_sum = np.sum(np.square(diff), axis=0)
-        sigma[k] = np.diag(diff_sum / np.sum(labels == k))
+        diff_squared = np.square(X[labels == k] - mu[k])*W[labels==k]
+        diff_sum = np.sum(diff_squared, axis=0)
+        sigma[k] = np.diag(diff_sum / np.sum(W[labels==k]))
 
 
 
@@ -164,7 +164,7 @@ testClassifier(BayesClassifier(), dataset='iris', split=0.7)
 
 
 
-#plotBoundary(BayesClassifier(), dataset='iris',split=0.7)
+plotBoundary(BayesClassifier(), dataset='iris',split=0.7)
 
 
 # ## Boosting functions to implement
