@@ -112,7 +112,8 @@ def classifyBayes(X, prior, mu, sigma):
         # index k in mu gives the mean of class k
         # index k in sigma gives the covariance of class k
         # calculate the log posterior for each class, logProb(i,k) is the log posterior of class k for point i
-        logProb[:,k] = -0.5*np.log(la.det(sigma[k])) - 0.5(X - mu[k])  @ la.inv(sigma[k]) @ (X - mu[k]).T + np.log(prior[k])
+        diff = X[:] - mu[k]
+        logProb[k] = -0.5*np.log(la.det(sigma[k]))  - 0.5*np.einsum('nj,ji,ni->n',diff,la.inv(sigma[k]),diff) + np.log(prior[k])
     
     
     # ==========================
