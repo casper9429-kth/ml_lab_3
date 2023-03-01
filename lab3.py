@@ -56,7 +56,6 @@ def computePrior(labels, W=None):
     for k in range(Nclasses):
         prior[k] = np.sum(W[labels==k])
     
-    
     return prior
 
 # NOTE: you do not need to handle the W argument for this part!
@@ -161,7 +160,7 @@ plotGaussian(X,labels,mu,sigma)
 # Call the `testClassifier` and `plotBoundary` functions for this part.
 
 
-testClassifier(BayesClassifier(), dataset='iris', split=0.7)
+#testClassifier(BayesClassifier(), dataset='iris', split=0.7)
 
 
 
@@ -169,7 +168,7 @@ testClassifier(BayesClassifier(), dataset='iris', split=0.7)
 
 
 
-plotBoundary(BayesClassifier(), dataset='iris',split=0.7)
+#plotBoundary(BayesClassifier(), dataset='iris',split=0.7)
 
 
 # ## Boosting functions to implement
@@ -203,7 +202,25 @@ def trainBoost(base_classifier, X, labels, T=10):
         # TODO: Fill in the rest, construct the alphas etc.
         # ==========================
         
-        # alphas.append(alpha) # you will need to append the new alpha
+        # calculate delta
+        delta = (vote == labels)     
+        delta_inv = (vote != labels)
+
+        # calculate epsilon
+        epsi = np.sum(wCur[delta == 0])
+
+        # calculate alpha
+        alpha = 0.5*(np.log(1-epsi) - np.log(epsi))         
+        
+        # calculate new weights
+        delta_factor = (delta[:]*(np.exp(-alpha)) + delta_inv[:]*(np.exp(alpha))) 
+        wCur[:,0] = wCur[:,0]*delta_factor[:]    
+        
+        # normalize the weights
+        wCur = wCur/np.sum(wCur)
+        
+        # save the alpha        
+        alphas.append(alpha) # you will need to append the new alpha
         # ==========================
         
     return classifiers, alphas
@@ -259,7 +276,7 @@ class BoostClassifier(object):
 # Call the `testClassifier` and `plotBoundary` functions for this part.
 
 
-#testClassifier(BoostClassifier(BayesClassifier(), T=10), dataset='iris',split=0.7)
+testClassifier(BoostClassifier(BayesClassifier(), T=10), dataset='iris',split=0.7)
 
 
 
